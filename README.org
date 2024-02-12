@@ -4,7 +4,9 @@
 
 This library renders times via emoji / Chinese characters of the
 zodiac animals, primarily for displaying the current time on the Emacs
-mode line.
+mode line:
+
+[[./screenshot.jpg]]
 
 It's a toy, not a serious calendar implementation—if that wasn't clear
 from the cartoon animals. 🦁
