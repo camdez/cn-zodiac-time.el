@@ -4,7 +4,7 @@
 
 This library renders times via emoji / Chinese characters of the
 zodiac animals, primarily for displaying the current time on the Emacs
-mode-line.
+mode line.
 
 It's a toy, not a serious calendar implementation—if that wasn't clear
 from the cartoon animals. 🦁
@@ -93,7 +93,7 @@ The full set of possible styles is:
                   (emoji       "Animal emoji")
                   (traditional "Animal names in traditional characters")
                   (simplified  "Animal names in simplified characters")
-                  (branches    "Earthly stems")))
+                  (branches    "Earthly branches")))
         (time (encode-time (list 0 42 8 10 11 2024))))
     (mapcar (lambda (s)
               (list (first s) (cn-zodiac-time (first s) nil time) (second s)))
@@ -102,10 +102,10 @@ The full set of possible styles is:
 
 #+RESULTS:
 | cute        | 大🐲 四十二分 | Animal face emoji (where available)    |
-| emoji       | 大🐉 四十二分 | Animals emoji                          |
+| emoji       | 大🐉 四十二分 | Animal emoji                           |
 | traditional | 大龍 四十二分 | Animal names in traditional characters |
 | simplified  | 大龙 四十二分 | Animal names in simplified characters  |
-| branches    | 辰正 四十二分 | Earthly stems                          |
+| branches    | 辰正 四十二分 | Earthly branches                  |
 
 ** Displaying on the Mode Line
 
