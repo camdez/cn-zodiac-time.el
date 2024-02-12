@@ -1,0 +1,180 @@
+#+TITLE: Chinese Zodiac Time for Emacs
+
+* Introduction
+
+This library renders times via emoji / Chinese characters of the
+zodiac animals, primarily for displaying the current time on the Emacs
+mode-line.
+
+It's a toy, not a serious calendar implementation—if that wasn't clear
+from the cartoon animals. 🦁
+
+* Background
+
+The method used to indicate the time is loosely based on [[https://en.wikipedia.org/wiki/Traditional_Chinese_timekeeping#Eastern_Han_to_Ming_system][a system used
+to measure time in the Ming dynasty]] which divided the day into 12
+equal periods (時), named after the 12 earthly branches (地支).
+Because the animals of the Chinese zodiac map 1-to-1 with the earthly
+branches, it is equally possible to indicate the time with the animals
+(though I'm not suggesting this was traditionally done):
+
+| Branch   | Animal | _Time 1_ (hh) | Time 2 (hh) |
+|----------+--------+---------------+-------------|
+| 子 (zǐ)   | rat    | 23–01         | 00–02       |
+| 丑 (chǒu) | ox     | 01–03         | 02–04       |
+| 寅 (yín)  | tiger  | 03–05         | 04–06       |
+| 卯 (mǎo)  | hare   | 05–07         | 06–08       |
+| 辰 (chén) | dragon | 07–09         | 08–10       |
+| 巳 (sì)   | snake  | 09–11         | 10–12       |
+| 午 (wǔ)   | horse  | 11–13         | 12–14       |
+| 未 (wèi)  | sheep  | 13–15         | 14–16       |
+| 申 (shēn) | monkey | 15–17         | 16–18       |
+| 酉 (yǒu)  | cock   | 17–19         | 18–20       |
+| 戌 (xū)   | dog    | 19–21         | 20–22       |
+| 亥 (hài)  | pig    | 21–23         | 22–00       |
+
+#+begin_quote
+Time 1: used in ancient China until the Tang dynasty, and in ancient /
+medieval Japan.
+
+Time 2: used in the Song dynasty of China.
+
+(Table adapted from [[https://academic.oup.com/pasj/article/56/5/887/2948928#85715189][Units of Time in Ancient China and Japan by Mitsuru Sôma, /et. al./]].)
+#+end_quote
+
+This library uses the older _Time 1_ system.  Notice that the first 時
+/spans/ midnight.
+
+Given that each ancient 時 corresponds to /two/ of our modern hours,
+it's convenient for us to know whether we're in the first or second
+half of that period for alignment with our own system of timekeeping.
+
+Indeed, by the end of the Tang dynasty, there was already such a
+convention, appending either 「初」 or 「正」 to mark the first or
+second halves, respectively, of the time period.  For example, 「子初」
+indicated the period from 23-00, and 「子正」indicated 00-01.
+
+While I have used that convention in this library with the earthly
+branches, I was uncertain how well it would read when paired with the
+animals of the zodiac (perhaps a native speaker can weigh in with an
+opinion here).  I considered a few different options and ultimately
+settled on prefixing 「小」 and 「大」(small and large) to
+differentiate the animal-named periods, which I find quite charming:
+
+| Time | 'cute | 'traditional | 'branches |
+|------+-------+--------------+-----------|
+| 3:00 | 小🐯  | 小虎          | 寅初       |
+| 4:00 | 大🐯  | 大虎          | 寅正       |
+
+If you'd prefer a different method, it is trivial to choose your own
+strings for both the 時 and for differentiating their halves (or not).
+
+* Basic Usage
+
+The simplest way to use the library is by calling ~cn-zodiac-time~,
+which renders the current time according to predefined styles.
+
+The following two invocations are equivalent:
+
+#+begin_src emacs-lisp :exports both :results verbatim
+  (cn-zodiac-time)
+  (cn-zodiac-time 'cute)
+#+end_src
+
+#+RESULTS:
+: "大🐶 二十八分"
+
+** Formatting Styles
+
+The full set of possible styles is:
+
+#+begin_src emacs-lisp :exports results :results table
+  (let ((styles '((cute        "Animal face emoji (where available)")
+                  (emoji       "Animal emoji")
+                  (traditional "Animal names in traditional characters")
+                  (simplified  "Animal names in simplified characters")
+                  (branches    "Earthly stems")))
+        (time (encode-time (list 0 42 8 10 11 2024))))
+    (mapcar (lambda (s)
+              (list (first s) (cn-zodiac-time (first s) nil time) (second s)))
+            styles))
+#+end_src
+
+#+RESULTS:
+| cute        | 大🐲 四十二分 | Animal face emoji (where available)    |
+| emoji       | 大🐉 四十二分 | Animals emoji                          |
+| traditional | 大龍 四十二分 | Animal names in traditional characters |
+| simplified  | 大龙 四十二分 | Animal names in simplified characters  |
+| branches    | 辰正 四十二分 | Earthly stems                          |
+
+** Displaying on the Mode Line
+
+You can add the current formatted time to the mode line with:
+
+#+begin_src emacs-lisp
+  (setq display-time-string-forms '((cn-zodiac-time 'cute)))
+#+end_src
+
+(Note the embedded style symbol.)
+
+The mode line may not immediately update.  To force an update, call:
+
+#+begin_src emacs-lisp
+  (display-time-update)
+#+end_src
+
+If you'd like to make the mode line larger, you can use:
+
+#+begin_src emacs-lisp
+  (set-face-attribute 'mode-line nil :height 200)
+#+end_src
+
+** Advanced Formatting
+
+If you'd like more control of the formatting, you can use
+~cn-zodiac-format-time~ and provide your own set of (12) 2-hour (時)
+indicators, and well as the indicators to differentiate the first and
+seconds halves of the hour.
+
+* Status
+
+Not very mature but appears to be working.
+
+* Installation
+
+Download =cn-zodiac-time.el= to a directory on your Emacs =load-path=
+and call ~(require 'cn-zodiac-time)~.
+
+Alternately, put it anywhere and call ~(load-file
+"/your/path/cn-zodiac-time.el")~.
+
+* Documentation
+
+You're looking at it.
+
+* Testing
+
+This project does not currently have a test suite.
+
+* Contributing
+
+GitHub issues and PRs are welcome.  As a silly project, I may not
+process these things quickly, but I'll get to them eventually.
+
+* License
+
+Copyright © Cameron Desautels, 2024
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see https://www.gnu.org/licenses/.
+
